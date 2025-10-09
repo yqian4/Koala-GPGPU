@@ -2,7 +2,7 @@
 `include "define.sv"
 
 
-module gpgpu_top (
+module sm_core (
 	input  clk,                                               // input clock for the system
 	input  rst_n,                                             // reset signal to the system, negative active
 	
@@ -25,21 +25,7 @@ module gpgpu_top (
 );
 
 
-sm_core sm (
-	.clk                         (clk),
-	.rst_n                       (rst_n),
-	.program_mem_available_i     (program_mem_available_i),
-	.program_read_valid_o        (program_read_valid_o),
-	.program_read_addr_o         (program_read_addr_o),
-	.program_read_ready_i        (program_read_ready_i),
-	.program_read_data_i         (program_read_data_i),
-	.host_req_ready_o            (host_req_ready_o),
-	.host_req_valid_i            (host_req_valid_i),
-	.host_req_kernel_code_addr_i (host_req_kernel_code_addr_i),
-	.host_rsp_ready_i            (host_rsp_ready_i),
-	.host_rsp_valid_o            (host_rsp_valid_o),
-	.host_rsp_wid_done           (host_rsp_wid_done)
-);
+
 
 
 endmodule
