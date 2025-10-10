@@ -9,7 +9,8 @@ module sm_core (
 	// program memory interface
 	input  program_mem_available_i,                           // signal indicating whether external program memory is vailable
 	output program_read_valid_o,                              // valid signal of program memory read operation
-	output [`PROGRAM_MEM_ADDR_BITS-1:0] program_read_addr_o,   // program memory read address
+	output [`PROGRAM_MEM_ADDR_BITS-1:0] program_read_addr_o,  // program memory read address
+	output [`DEPTH_WARP-1:0] program_read_wid_o,              // warp id of program memory read 	
 	input  program_read_ready_i,                              // ready siginal of program memory data after read operation
    input  [`PROGRAM_MEM_DATA_BITS-1:0] program_read_data_i,	 // data bits returned by program memory read operation
 	
@@ -24,8 +25,62 @@ module sm_core (
 	output [`DEPTH_WARP-1:0] host_rsp_wid_done                // id of the warp that finishes the execution
 );
 
+sm_warp_scheduler warp_scheduler (
+	.clk                         (clk),
+	.rst_n                       (rst_n),
 
 
+);
+
+sm_fetch fetch (
+
+
+);
+
+sm_decode decode (
+
+
+);
+
+sm_score_board score_board (
+
+
+);
+
+sm_inst_buffer inst_buffer (
+
+
+);
+
+sm_operand_read operand_read (
+
+
+);
+
+sm_issue issue (
+
+
+);
+
+sm_scalar_ALU scalar_ALU (
+
+
+);
+
+sm_scalar_FPU scalar_FPU (
+
+
+);
+
+sm_tensor_core tensor_core (
+
+
+);
+
+sm_write write (
+
+
+);
 
 
 endmodule
