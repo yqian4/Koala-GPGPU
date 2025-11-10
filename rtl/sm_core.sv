@@ -6,78 +6,98 @@ module sm_core (
 	input  clk,                                               // input clock for the system
 	input  rst_n,                                             // reset signal to the system, negative active
 	
-	// program memory interface
-	input  program_mem_available_i,                           // signal indicating whether external program memory is vailable
-	output program_read_valid_o,                              // valid signal of program memory read operation
-	output [`PROGRAM_MEM_ADDR_BITS-1:0] program_read_addr_o,  // program memory read address
-	output [`DEPTH_WARP-1:0] program_read_wid_o,              // warp id of program memory read 	
-	input  program_read_ready_i,                              // ready siginal of program memory data after read operation
-   input  [`PROGRAM_MEM_DATA_BITS-1:0] program_read_data_i,	 // data bits returned by program memory read operation
+	// code memory interface
+	input  code_mem_available_i,                              // signal indicating whether external code memory is vailable
+	output code_read_valid_o,                                 // valid signal of code memory read operation
+	output [`CODE_MEM_ADDR_WIDTH-1:0] code_read_addr_o,       // code memory read address
+	output [`DEPTH_WARP-1:0] code_read_wid_o,                 // warp id of code memory read 	
+	input  code_read_ready_i,                                 // ready siginal of code memory data after read operation
+   input  [`CODE_MEM_DATA_WIDTH-1:0] code_read_data_i,       // data bits returned by code memory read operation
 	
 	
-	// host interface
-	output host_req_ready_o,                                  // signal telling whether GPU is ready to receive a new request from host
-	input  host_req_valid_i,                                  // signal indicating a new kernel assigned for execution
-	input  host_req_kernel_code_addr_i,                       // starting address of kernel code
+	// tpc interface
+	output tpc_req_ready_o,                                   // signal telling whether sm core is ready to receive a new request from tpc
+	input  tpc_req_valid_i,                                   // signal indicating a new kernel to be assigned to this sm core for execution
+	input  [`CODE_ADDR_WIDTH-1:0] tpc_req_start_addr_i,       // starting address for kernel code
 	
-	input  host_rsp_ready_i,                                  // signal telling whether host is ready to receive the response from GPU
-	output host_rsp_valid_o,                                  // valid signal of GPU response
-	output [`DEPTH_WARP-1:0] host_rsp_wid_done                // id of the warp that finishes the execution
+	input  tpc_rsp_ready_i,                                   // signal telling whether tpc is ready to receive the response from this sm core
+	output tpc_rsp_valid_o,                                   // valid signal of sm core response to gpc
+	output [`DEPTH_WARP-1:0] tpc_rsp_wid_done                 // warp id of the warp that has finished its execution
 );
 
-sm_warp_scheduler warp_scheduler (
+wire sm_warp_req_valid;
+wire [`DEPTH_WARP-1:0] sm_warp_req_wid;
+
+wire sm_warp_rsp_ready;
+wire sm_warp_rsp_valid;
+wire [`DEPTH_WARP-1:0] sm_warp_rsp_wid;
+
+wire [`NUM_WARP-1:0] inst_buffer_avail; 
+
+sm_warp_assign U_sm_warp_assign (
+	.clk                         (clk),
+	.rst_n                       (rst_n),	
+	
+	.tpc_req_ready_o             (tpc_req_ready_o),
+	.tpc_req_valid_i             (tpc_req_valid_i),
+	.tpc_rsp_ready_i             (tpc_rsp_ready_i),
+	.tpc_rsp_valid_o             (tpc_rsp_valid_o),
+	
+	
+	.sm_warp_req_valid_o         (sm_warp_req_valid),
+	.sm_warp_req_wid_o           (sm_warp_req_wid),
+	.sm_warp_rsp_ready_o         (sm_warp_rsp_ready),
+	.sm_warp_rsp_valid_i         (sm_warp_rsp_valid),
+	.sm_warp_rsp_wid_i           (sm_warp_rsp_wid)
+);
+
+sm_fetch U_sm_fetch (
 	.clk                         (clk),
 	.rst_n                       (rst_n),
+	
+	.sm_warp_req_valid_i         (sm_warp_req_valid),
+	.sm_warp_req_wid_i           (sm_warp_req_wid),
+	.sm_warp_req_start_addr_i    (tpc_req_start_addr_i),
+	.inst_buffer_avail_i         (inst_buffer_avail),
+	
+	.code_mem_available_i        (code_mem_available_i),
+	.code_read_valid_o           (code_read_valid_o),
+	.code_read_addr_o            (code_read_addr_o)
+);
+
+sm_decode U_sm_decode (
 
 
 );
 
-sm_fetch fetch (
+
+sm_inst_buffer U_sm_inst_buffer (
 
 
 );
 
-sm_decode decode (
+sm_score_board U_sm_score_board (
 
 
 );
 
-sm_score_board score_board (
+sm_issue U_sm_issue (
 
 
 );
 
-sm_inst_buffer inst_buffer (
+sm_operand_collect U_sm_operand_collect (
 
 
 );
 
-sm_operand_read operand_read (
+sm_execute U_sm_execute (
 
 
 );
 
-sm_issue issue (
 
-
-);
-
-sm_scalar_ALU scalar_ALU (
-
-
-);
-
-sm_scalar_FPU scalar_FPU (
-
-
-);
-
-sm_tensor_core tensor_core (
-
-
-);
-
-sm_write write (
+sm_write U_sm_write (
 
 
 );
