@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-`include "define.sv"
+`include "common/define.sv"
 
 
 module gpgpu_top (
@@ -21,7 +21,7 @@ module gpgpu_top (
 	
 	input  host_rsp_ready_i,                                   // signal telling whether host is ready to receive the response from GPU
 	output host_rsp_valid_o,                                   // valid signal of GPU response
-	output [`DEPTH_WARP-1:0] host_rsp_wid_done                 // id of the warp that finishes the execution
+	output [`DEPTH_WARP-1:0] host_rsp_wid_o                    // id of the warp that finishes the execution
 );
 
 
@@ -38,7 +38,7 @@ sm_core U_sm_core (
 	.tpc_req_start_addr_i        (host_req_start_addr_i),
 	.tpc_rsp_ready_i             (host_rsp_ready_i),
 	.tpc_rsp_valid_o             (host_rsp_valid_o),
-	.tpc_rsp_wid_done            (host_rsp_wid_done)
+	.tpc_rsp_wid_o               (host_rsp_wid_o)
 );
 
 
