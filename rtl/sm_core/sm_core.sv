@@ -7,12 +7,14 @@ module sm_core (
 	input  rst_n,                                             // reset signal to the system, negative active
 	
 	// code memory interface
-	input  code_mem_available_i,                              // signal indicating whether external code memory is vailable
-	output code_read_valid_o,                                 // valid signal of code memory read operation
-	output [`CODE_MEM_ADDR_WIDTH-1:0] code_read_addr_o,       // code memory read address
-	output [`DEPTH_WARP-1:0] code_read_wid_o,                 // warp id of code memory read 	
-	input  code_read_ready_i,                                 // ready siginal of code memory data after read operation
-   input  [`CODE_MEM_DATA_WIDTH-1:0] code_read_data_i,       // data bits returned by code memory read operation
+	input  code_mem_ready_i,                                  // signal indicating whether external code memory is ready for access
+	output code_rd_req_valid_o,                               // valid signal of code memory read operation
+	output [`CODE_MEM_ADDR_WIDTH-1:0] code_rd_req_addr_o,     // code memory read address
+	output [`DEPTH_WARP-1:0] code_rd_req_wid_o,               // warp id of code memory read 	
+	input  code_rd_rsp_valid_i,                               // valid signal of code memory data after read operation
+	input  [`CODE_MEM_ADDR_WIDTH-1:0] code_rd_rsp_addr_i,     // code memory read address
+	input  [`DEPTH_WARP-1:0] code_rd_rsp_wid_i,               // warp id of code memory read 
+   input  [`CODE_MEM_DATA_WIDTH-1:0] code_rd_rsp_data_i,     // data bits returned by code memory read operation
 	
 	
 	// tpc interface
@@ -32,7 +34,8 @@ wire sm_warp_rsp_ready;
 wire sm_warp_rsp_valid;
 wire [`DEPTH_WARP-1:0] sm_warp_rsp_wid;
 
-//wire [`NUM_WARP-1:0] inst_buffer_avail; 
+wire [`NUM_WARP-1:0] inst_buffer_avail; 
+wire [`NUM_WARP-1:0] stalled_warps;
 
 sm_warp_assign U_sm_warp_assign (
 	.clk                         (clk),
@@ -50,20 +53,26 @@ sm_warp_assign U_sm_warp_assign (
 	.sm_warp_rsp_valid_i         (sm_warp_rsp_valid),
 	.sm_warp_rsp_wid_i           (sm_warp_rsp_wid)
 );
-//
-//sm_fetch U_sm_fetch (
-//	.clk                         (clk),
-//	.rst_n                       (rst_n),
-//	
-//	.sm_warp_req_valid_i         (sm_warp_req_valid),
-//	.sm_warp_req_wid_i           (sm_warp_req_wid),
-//	.sm_warp_req_start_addr_i    (tpc_req_start_addr_i),
-//	.inst_buffer_avail_i         (inst_buffer_avail),
-//	
-//	.code_mem_available_i        (code_mem_available_i),
-//	.code_read_valid_o           (code_read_valid_o),
-//	.code_read_addr_o            (code_read_addr_o)
-//);
+
+sm_fetch U_sm_fetch (
+	.clk                         (clk),
+	.rst_n                       (rst_n),
+	
+	.sm_warp_req_valid_i         (sm_warp_req_valid),
+	.sm_warp_req_wid_i           (sm_warp_req_wid),
+	.sm_warp_req_start_addr_i    (tpc_req_start_addr_i),
+	.inst_buffer_avail_i         (inst_buffer_avail),
+	.stalled_warps_i             (stalled_warps),
+	
+	.code_mem_ready_i            (code_mem_ready_i),
+	.code_rd_req_valid_o         (code_rd_req_valid_o),
+	.code_rd_req_addr_o          (code_rd_req_addr_o),
+	.code_rd_req_wid_o           (code_rd_req_wid_o),
+	
+	.code_rd_rsp_valid_i         (code_rd_rsp_valid_i),
+	.code_rd_rsp_addr_i          (code_rd_rsp_addr_i),
+	.code_rd_rsp_wid_i           (code_rd_rsp_wid_i)
+);
 //
 //sm_decode U_sm_decode (
 //

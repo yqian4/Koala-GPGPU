@@ -18,19 +18,19 @@ module sm_warp_assign (
 	input  [`DEPTH_WARP-1:0] sm_warp_rsp_wid_i	             // warp id of a new completed warp
 );
 
-wire tpc_req_accepted, sm_warp_rsp_accepted;
+wire tpc_req_fire, sm_warp_rsp_fire;
 reg [`NUM_WARP-1:0]  bitmap_assigned;
 wire [`NUM_WARP-1:0] bitmap_to_assign,bitmap_to_release;
 
 wire [`DEPTH_WARP-1:0] index_to_assign;
-wire [`NUM_WARP-1:0]   bitmap_to_assign_one;
+wire [`NUM_WARP-1:0]   bitmap_to_assign_oh;
 
-assign tpc_req_accepted = tpc_req_valid_i && tpc_req_ready_o;
-assign sm_warp_rsp_accepted = sm_warp_rsp_valid_i && sm_warp_rsp_ready_o;
+assign tpc_req_fire = tpc_req_valid_i && tpc_req_ready_o;
+assign sm_warp_rsp_fire = sm_warp_rsp_valid_i && sm_warp_rsp_ready_o;
 
 assign tpc_req_ready_o = ~(&bitmap_assigned);
-assign bitmap_to_assign = bitmap_assigned | ((1'h1<<index_to_assign) & {`NUM_WARP{tpc_req_accepted}}); 
-assign bitmap_to_release = (1'h1<<sm_warp_rsp_wid_i) & {`NUM_WARP{sm_warp_rsp_accepted}}; 
+assign bitmap_to_assign = bitmap_assigned | ((1'h1<<index_to_assign) & {`NUM_WARP{tpc_req_fire}}); 
+assign bitmap_to_release = (1'h1<<sm_warp_rsp_wid_i) & {`NUM_WARP{sm_warp_rsp_fire}}; 
 
 assign sm_warp_rsp_ready_o = tpc_rsp_ready_i;
 assign tpc_rsp_valid_o = sm_warp_rsp_valid_i;
@@ -48,19 +48,19 @@ end
 
 rr_arb #(
 	.ARB_WIDTH(`NUM_WARP)
-) U_rr_arb (
+) assign_rr_arb (
 	.clk                 (clk),
 	.rst_n               (rst_n),
 	.req_i               (~bitmap_assigned),
-	.grant_o             (bitmap_to_assign_one)
+	.grant_o             (bitmap_to_assign_oh)
 );
 
 
 oh2bin #(
 	.ONE_HOT_WIDTH(`NUM_WARP),
 	.BIN_WIDTH(`DEPTH_WARP)
-) U_oh2bin (
-	.oh_i                (bitmap_to_assign_one),
+) assign_oh2bin (
+	.oh_i                (bitmap_to_assign_oh),
 	.bin_o               (index_to_assign)
 );
 
