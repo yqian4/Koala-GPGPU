@@ -15,7 +15,7 @@ module sm_fetch (
    
    input  code_rd_rsp_valid_i,                               // indicate the response from external code memory is available
    input  [`CODE_MEM_ADDR_WIDTH-1:0] code_rd_rsp_addr_i,     // returned address of code memory response	
-	output [`DEPTH_WARP-1:0] code_rd_rsp_wid_i                // warp id of code memory response	
+	input  [`DEPTH_WARP-1:0] code_rd_rsp_wid_i                // warp id of code memory response	
 );
 
 wire sm_warp_req_fire;
