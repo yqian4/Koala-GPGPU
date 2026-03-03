@@ -16,8 +16,8 @@ module sm_decode (
 	output [3:0] decode_signals_pr_o,                         // output pr field
 	output [5:0] decode_signals_re0_o,                        // output re0 field
 	output [5:0] decode_signals_re1_o,                        // output re1 field
-	output [9:0] decode_signals_immeb_o,                      // output immeb field
 	output [21:0] decode_signals_immea_o,                     // output immea field
+	output [9:0] decode_signals_immeb_o,                      // output immeb field	
 	output [5:0] decode_signals_opcode_nb_o                   // output opcode nb field
 );
 
@@ -47,8 +47,8 @@ assign decode_signals_mod_o = cached_decode_inst[9:4];
 assign decode_signals_pr_o = cached_decode_inst[13:10];
 assign decode_signals_re0_o = cached_decode_inst[19:14];
 assign decode_signals_re1_o = cached_decode_inst[25:20];
-assign decode_signals_immeb_o = cached_decode_inst[35:26];
-assign decode_signals_immea_o = cached_decode_inst[57:36];
+assign decode_signals_immea_o = cached_decode_inst[47:26];
+assign decode_signals_immeb_o = cached_decode_inst[57:48];
 assign decode_signals_opcode_nb_o = cached_decode_inst[63:58];
 
 endmodule

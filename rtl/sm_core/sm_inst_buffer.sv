@@ -17,8 +17,8 @@ module sm_inst_buffer #(
 	input [3:0] decode_signals_pr_i,                           // input pr field
 	input [5:0] decode_signals_re0_i,                          // input re0 field
 	input [5:0] decode_signals_re1_i,                          // input re1 field
-	input [9:0] decode_signals_immeb_i,                        // input immeb field
 	input [21:0] decode_signals_immea_i,                       // input immea field
+	input [9:0] decode_signals_immeb_i,                        // input immeb field	
 	input [5:0] decode_signals_opcode_nb_i,                    // input opcode nb field
 
 	output [`CODE_MEM_DATA_WIDTH-1:0] ibuffer_signals_inst_o,  // output instruction 
@@ -28,8 +28,8 @@ module sm_inst_buffer #(
 	output [3:0] ibuffer_signals_pr_o,                         // output pr field
 	output [5:0] ibuffer_signals_re0_o,                        // output re0 field
 	output [5:0] ibuffer_signals_re1_o,                        // output re1 field
-	output [9:0] ibuffer_signals_immeb_o,                      // output immeb field
 	output [21:0] ibuffer_signals_immea_o,                     // output immea field
+	output [9:0] ibuffer_signals_immeb_o,                      // output immeb field	
 	output [5:0] ibuffer_signals_opcode_nb_o,                  // output opcode nb field	
 	output ibuffer_signals_valid_i,                            // valid signal of decode signals	
 		
@@ -53,8 +53,8 @@ assign wr_data =
 				decode_signals_inst_i,
 				decode_signals_wid_i,
 				decode_signals_opcode_nb_i,
-				decode_signals_immea_i,
 				decode_signals_immeb_i,
+				decode_signals_immea_i,				
 				decode_signals_re1_i,
 				decode_signals_re0_i,
 				decode_signals_pr_i,
@@ -91,8 +91,8 @@ assign ibuffer_signals_mod_o = rd_data[9:4];
 assign ibuffer_signals_pr_o = rd_data[13:10];
 assign ibuffer_signals_re0_o = rd_data[19:14];
 assign ibuffer_signals_re1_o = rd_data[25:20];
-assign ibuffer_signals_immeb_o = rd_data[35:26];
-assign ibuffer_signals_immea_o = rd_data[57:36];
+assign ibuffer_signals_immea_o = rd_data[47:26];
+assign ibuffer_signals_immeb_o = rd_data[57:48];
 assign ibuffer_signals_opcode_nb_o = rd_data[63:58];
 
 assign ibuffer_signals_valid_i = (warp_to_issue_oh_i != 0) ? 1'b1:1'b0;
