@@ -6,8 +6,8 @@ module sm_decode (
 	input  rst_n, 
 	
 	input  valid_i,                                           // indicate whether there is a valid instruction to be decoded
-	input  inst_i,                                            // input instruction to be decoded
-	input  wid_i,                                             // input warp id
+	input  [`CODE_MEM_DATA_WIDTH-1:0] inst_i,                 // input instruction to be decoded
+	input  [`DEPTH_WARP-1:0] wid_i,                           // input warp id
 	
 	output [`CODE_MEM_DATA_WIDTH-1:0] decode_signals_inst_o,  // output instruction 
 	output [`DEPTH_WARP-1:0] decode_signals_wid_o,            // output warp id

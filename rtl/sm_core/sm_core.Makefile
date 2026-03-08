@@ -1,0 +1,2 @@
+VERILOG_SOURCES += $(CURDIR)/sm_core/sm_core.sv $(CURDIR)/sm_core/sm_decode.sv $(CURDIR)/sm_core/sm_fetch.sv
+VERILOG_SOURCES += $(CURDIR)/sm_core/sm_inst_buffer.sv $(CURDIR)/sm_core/sm_warp_assign.sv

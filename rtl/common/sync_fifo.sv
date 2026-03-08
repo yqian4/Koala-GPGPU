@@ -10,7 +10,7 @@ module sync_fifo #(
 	input  rst_n,                                             // reset signal, negative active
 	
 	input  rd_en_i,                                           // fifo read enable signal
-	output [DATA_WIDTH-1:0] rd_data_o,                        // read data from fifo
+	output reg [DATA_WIDTH-1:0] rd_data_o,                        // read data from fifo
 	input  wr_en_i,                                           // fifo write enable signal
 	input  [DATA_WIDTH-1:0] wr_data_i,                        // write data to fifo
 	output empty_o,                                           // fifo empty flag
@@ -28,6 +28,7 @@ wire [ADDR_WIDTH-1:0] wr_ptr_true;
 
 wire rd_ptr_msb;
 wire wr_ptr_msb;
+integer i;
 
 assign {rd_ptr_msb, rd_ptr_true} = rd_ptr;
 assign {wr_ptr_msb, wr_ptr_true} = rd_ptr;
@@ -50,7 +51,9 @@ end
 always @(posedge clk or negedge rst_n) begin
 	if(!rst_n) begin
       wr_ptr <= 'd0;
-		fifo_data <='{default:'h0};
+		for (i = 0; i < FIFO_DEPTH; i = i + 1) begin
+			 fifo_data[i] <= {DATA_WIDTH{1'b0}};
+		end
     end
     else if(wr_en_i && !full_o) begin
 		fifo_data[wr_ptr_true] <= wr_data_i;

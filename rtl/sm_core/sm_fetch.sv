@@ -3,7 +3,7 @@ module sm_fetch (
 	input  rst_n, 
 	
 	input  sm_warp_req_valid_i,                               // indiate a new warp request is available
-	input  sm_warp_req_wid_i,                                 // warp id of this new warp request
+	input  [`DEPTH_WARP-1:0] sm_warp_req_wid_i,                                 // warp id of this new warp request
 	input  [`CODE_ADDR_WIDTH-1:0] sm_warp_req_start_addr_i,   // starting address for kernel code
 	input  [`NUM_WARP-1:0] inst_buffer_avail_i,               // indicate whether instruction buffer of this warp has free space
 	input  [`NUM_WARP-1:0] stalled_warps_i,                   // tell the information of stalled warps
