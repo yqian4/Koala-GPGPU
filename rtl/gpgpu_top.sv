@@ -3,18 +3,18 @@
 
 
 module gpgpu_top (
-	input  clk,                                                // input clock for the system
-	input  rst_n,                                              // reset signal to the system, negative active
+	input  clk,                                               // input clock for the system
+	input  rst_n,                                             // reset signal to the system, negative active
 	
 	// code memory interface
-	input  code_mem_ready_i,                                   // signal indicating whether external code memory is ready for access	
+	input  code_mem_ready_i,                                  // signal indicating whether external code memory is ready for access	
 	output code_rd_req_valid_o,                               // valid signal of code memory read operation
 	output [`CODE_MEM_ADDR_WIDTH-1:0] code_rd_req_addr_o,     // code memory read address
 	output [`DEPTH_WARP-1:0] code_rd_req_wid_o,               // warp id of code memory read 	
 	input  code_rd_rsp_valid_i,                               // valid signal of code memory data after read operation
 	input  [`CODE_MEM_ADDR_WIDTH-1:0] code_rd_rsp_addr_i,     // code memory read address
 	input  [`DEPTH_WARP-1:0] code_rd_rsp_wid_i,               // warp id of code memory read 
-   input  [`CODE_MEM_DATA_WIDTH-1:0] code_rd_rsp_data_i,     // data bits returned by code memory read operation
+	input  [`CODE_MEM_DATA_WIDTH-1:0] code_rd_rsp_data_i,     // data bits returned by code memory read operation
 	
 	
 	// host interface

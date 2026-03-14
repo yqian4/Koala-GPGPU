@@ -8,4 +8,4 @@ endif
 export LIBPYTHON_LOC=$(shell cocotb-config --libpython)
 test_%:
 	iverilog -o ./sim.vvp $(TOPMODULE_ARG) -g2012 $(COMPILE_ARGS) $(VERILOG_SOURCES)
-	#MODULE=test.test_$* vvp -M $$(cocotb-config --prefix)/cocotb/libs -m cocotbvpi_icarus ./sim.vvp
+	MODULE=test.test_$* vvp -M $$(cocotb-config --prefix)/cocotb/libs -m cocotbvpi_icarus ./sim.vvp
