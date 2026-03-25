@@ -45,7 +45,7 @@ always @(posedge clk or negedge rst_n) begin
 		bitmap_assigned <= 'h0;
 	end 
 	else begin
-		bitmap_assigned <= bitmap_to_assign & (~bitmap_to_release); 
+		bitmap_assigned <= bitmap_to_assign;            //bitmap_to_assign & (~bitmap_to_release); 
 	end  
 end 
 
@@ -55,7 +55,7 @@ rr_arb #(
 ) assign_rr_arb (
 	.clk                 (clk),
 	.rst_n               (rst_n),
-	.req_i               (~bitmap_assigned),
+	.req_i               (tpc_req_fire?~bitmap_assigned:{`NUM_WARP{1'b0}}),
 	.grant_o             (bitmap_to_assign_oh)
 );
 

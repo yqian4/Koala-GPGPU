@@ -15,7 +15,7 @@ module sm_fetch (
    
    input  code_rd_rsp_valid_i,                               // indicate the response from external code memory is available
    input  [`CODE_MEM_ADDR_WIDTH-1:0] code_rd_rsp_addr_i,     // returned address of code memory response	
-	input  [`DEPTH_WARP-1:0] code_rd_rsp_wid_i                // warp id of code memory response	
+   input  [`DEPTH_WARP-1:0] code_rd_rsp_wid_i                // warp id of code memory response	
 );
 
 wire sm_warp_req_fire;
@@ -31,7 +31,7 @@ integer i;
 
 assign sm_warp_req_fire = sm_warp_req_valid_i;
 
-assign ready_warps = (active_warps & stalled_warps_i) & inst_buffer_avail_i;
+assign ready_warps = active_warps & inst_buffer_avail_i; //(active_warps & stalled_warps_i) & inst_buffer_avail_i;
 
 always @(posedge clk or negedge rst_n) begin
 	if(!rst_n) begin
@@ -68,7 +68,7 @@ always @(posedge clk or negedge rst_n) begin
 		end 
 		else begin			
 			warp_pcs[i] <= (sm_warp_req_fire && (i == sm_warp_req_wid_i)) ? sm_warp_req_start_addr_i :
-								((code_rd_rsp_valid_i && (i == code_rd_rsp_wid_i)) ? code_rd_rsp_addr_i : warp_pcs[i]);
+								((ready_warps[i] && (i == selected_warp)) ? warp_pcs[i]+(`CODE_MEM_DATA_WIDTH >> 3): warp_pcs[i]);
 		end
 	end
 end

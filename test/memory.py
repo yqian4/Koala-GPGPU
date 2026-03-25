@@ -20,6 +20,7 @@ class Memory:
         self.mem_rd_rsp_wid = getattr(dut, f"{name}_rd_rsp_wid_i")
         self.mem_rd_rsp_data = getattr(dut, f"{name}_rd_rsp_data_i")
         self.mem_ready.value = 1
+        self.mem_rd_rsp_valid.value=0
 
     def run(self):
         mem_rd_req_valid = int(str(self.mem_rd_req_valid.value), 2)
@@ -32,8 +33,12 @@ class Memory:
         mem_rd_rsp_data = 0
 
         if mem_rd_req_valid == 1:
-            mem_rd_rsp_data = self.memory[mem_rd_req_addr]
-            mem_rd_rsp_addr = mem_rd_req_addr + self.data_bytes
+            mem_rd_index = mem_rd_req_addr // self.data_bytes
+            if (mem_rd_index < len(self.memory)):
+                mem_rd_rsp_data = self.memory[mem_rd_index]
+            else:
+                mem_rd_rsp_data = 0
+            mem_rd_rsp_addr = mem_rd_req_addr
             mem_rd_rsp_wid = mem_rd_req_wid
             mem_rd_rsp_valid = 1
         else:

@@ -5,10 +5,11 @@ from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge
 from .memory import Memory
 from .logger import logger
+from .host import host_interface
 from .dump import dump_per_cycle
 
 from remote_pdb import RemotePdb
-#rpdb = RemotePdb("127.0.0.1", 4000)
+rpdb = RemotePdb("127.0.0.1", 4000)
 
 @cocotb.test()
 async def test_prefetch(dut):
@@ -30,30 +31,38 @@ async def test_prefetch(dut):
         0b10000000011101100101000011011110, # STR R7, R6                     ; store C[i] in global memory
         0b11110000000000000101000011011110, # RET                            ; end of kernel
     ]
+    # Initialize host interface
+    host = host_interface(dut=dut, addr_bits=32, wid_bits=8)
 
     # Setup 50MHZ Clock
     clock = Clock(dut.clk, 10, units="us")
     cocotb.start_soon(clock.start())
 
+    rpdb.set_trace()
     # Reset
     dut.rst_n.value = 0
     await RisingEdge(dut.clk)
     dut.rst_n.value = 1
-   
+
     # Load kernel code into code memory
     code_memory.load(kernel_code)
-
-    # send one kernel for execution
-    #host_launch_one_kernel(dut)
     await RisingEdge(dut.clk)
+    dump_per_cycle(dut, 800) 
+    
+    # send one kernel for execution
+    host.launch_kernel(kernel_addr=0)
+    await RisingEdge(dut.clk)
+    dump_per_cycle (dut, 998)
 
-    #rpdb.set_trace()
+    host.clear()
+    await RisingEdge(dut.clk)
+    dump_per_cycle (dut, 999)
+    
     cycles = 0
-    for i in range(1):
+    for i in range(5):
         code_memory.run()
 
-        await RisingEdge(dut.clk)
-        await cocotb.triggers.ReadWrite()    
+        await RisingEdge(dut.clk)   
 
         dump_per_cycle(dut, cycles)  
 
