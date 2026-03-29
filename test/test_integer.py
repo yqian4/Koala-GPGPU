@@ -51,7 +51,7 @@ async def test_integer(dut):
     dump_per_cycle (dut, 999)
     
     cycles = 0
-    for i in range(5):
+    for i in range(8):
         code_memory.run()
 
         await RisingEdge(dut.clk)   
