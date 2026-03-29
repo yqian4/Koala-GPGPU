@@ -3,17 +3,17 @@ from .logger import logger
 
 def dump_scheduler(dut):
     logger.log("\n Scheduler State:")
-    logger.log("U_sm_warp_assign.index_to_assign：", dut.U_sm_core.U_sm_warp_assign.index_to_assign.value)
-    logger.log("U_sm_warp_assign.bitmap_to_assign_oh：", dut.U_sm_core.U_sm_warp_assign.bitmap_to_assign_oh.value)
-    logger.log("U_sm_warp_assign.bitmap_to_assign：", dut.U_sm_core.U_sm_warp_assign.bitmap_to_assign.value)
-    logger.log("U_sm_warp_assign.bitmap_assigned：", dut.U_sm_core.U_sm_warp_assign.bitmap_assigned.value)
+    logger.log("U_sm_warp_scheduler.index_to_assign：", dut.U_sm_core.U_sm_warp_scheduler.index_to_assign.value)
+    logger.log("U_sm_warp_scheduler.bitmap_to_assign_oh：", dut.U_sm_core.U_sm_warp_scheduler.bitmap_to_assign_oh.value)
+    logger.log("U_sm_warp_scheduler.bitmap_to_assign：", dut.U_sm_core.U_sm_warp_scheduler.bitmap_to_assign.value)
+    logger.log("U_sm_warp_scheduler.bitmap_assigned：", dut.U_sm_core.U_sm_warp_scheduler.bitmap_assigned.value)
 
-    logger.log("U_sm_warp_assign.tpc_req_ready_o：", dut.U_sm_core.U_sm_warp_assign.tpc_req_ready_o.value)
-    logger.log("U_sm_warp_assign.tpc_req_fire：", dut.U_sm_core.U_sm_warp_assign.tpc_req_fire.value)
-    logger.log("U_sm_warp_assign.tpc_req_valid_i：", dut.U_sm_core.U_sm_warp_assign.tpc_req_valid_i.value)
+    logger.log("U_sm_warp_scheduler.tpc_req_ready_o：", dut.U_sm_core.U_sm_warp_scheduler.tpc_req_ready_o.value)
+    logger.log("U_sm_warp_scheduler.tpc_req_fire：", dut.U_sm_core.U_sm_warp_scheduler.tpc_req_fire.value)
+    logger.log("U_sm_warp_scheduler.tpc_req_valid_i：", dut.U_sm_core.U_sm_warp_scheduler.tpc_req_valid_i.value)
 
-    logger.log("U_sm_warp_assign.sm_warp_req_valid_o：", dut.U_sm_core.U_sm_warp_assign.sm_warp_req_valid_o.value)
-    logger.log("U_sm_warp_assign.sm_warp_req_wid_o：", dut.U_sm_core.U_sm_warp_assign.sm_warp_req_wid_o.value)
+    logger.log("U_sm_warp_scheduler.sm_warp_req_valid_o：", dut.U_sm_core.U_sm_warp_scheduler.sm_warp_req_valid_o.value)
+    logger.log("U_sm_warp_scheduler.sm_warp_req_wid_o：", dut.U_sm_core.U_sm_warp_scheduler.sm_warp_req_wid_o.value)
     
 def dump_prefetch(dut):
     logger.log("\n Prefetch State:")

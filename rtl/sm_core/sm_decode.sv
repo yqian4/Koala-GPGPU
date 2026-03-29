@@ -42,12 +42,25 @@ end
 assign decode_signals_inst_o = cached_decode_inst;
 assign decode_signals_wid_o = cached_decode_wid;
 
+
+// Ferimi GPU Instruction Encoding Format (8-Byte Instruction):
+// Opcode NA: [3:0]
+// Mod: [9:4]
+// PR: [13:10]
+// Dst Register: [19:14]
+// Src1 Register: [25:20]
+// Src2 Register: [31:26]
+// Const Offset: [41:26], Const Bank [45:42]
+// Immediate Value: [45:26]
+// Space Selector: [47:46]: 00-use SRC2, 01-use Const, 10-unused, 11-Immediate Value
+// Src3 Register: [54:49]
+
 assign decode_signals_opcode_na_o = cached_decode_inst[3:0];
 assign decode_signals_mod_o = cached_decode_inst[9:4];
 assign decode_signals_pr_o = cached_decode_inst[13:10];
-assign decode_signals_re0_o = cached_decode_inst[19:14];
-assign decode_signals_re1_o = cached_decode_inst[25:20];
-assign decode_signals_immea_o = cached_decode_inst[47:26];
+assign decode_signals_re0_o = cached_decode_inst[19:14]; 
+assign decode_signals_re1_o = cached_decode_inst[25:20]; 
+assign decode_signals_immea_o = cached_decode_inst[47:26]; 
 assign decode_signals_immeb_o = cached_decode_inst[57:48];
 assign decode_signals_opcode_nb_o = cached_decode_inst[63:58];
 

@@ -66,7 +66,7 @@ wire [`NUM_WARP-1:0]            inst_buffer_has_data;
 
 assign inst_to_decode = code_rd_rsp_data_i;
 
-sm_warp_assign U_sm_warp_assign (
+sm_warp_scheduler U_sm_warp_scheduler (
 	.clk                         (clk),
 	.rst_n                       (rst_n),	
 	
