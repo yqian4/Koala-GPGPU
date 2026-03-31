@@ -33,8 +33,9 @@ wire [`DEPTH_WARP-1:0]          sm_warp_req_wid;
 wire sm_warp_rsp_ready, sm_warp_rsp_valid;
 wire [`DEPTH_WARP-1:0]          sm_warp_rsp_wid;
 
-wire [`NUM_WARP-1:0]            inst_buffer_avail; 
+wire [`NUM_WARP-1:0]            ibuffer_avail; 
 wire [`NUM_WARP-1:0]            stalled_warps;
+wire [`NUM_WARP-1:0]            ready_warps;
 
 wire [`CODE_MEM_DATA_WIDTH-1:0] inst_to_decode;
 
@@ -60,9 +61,8 @@ wire [9:0]                      ibuffer_signals_immeb;
 wire [21:0]                     ibuffer_signals_immea;
 wire [5:0]                      ibuffer_signals_opcode_nb;
 wire                            ibuffer_signals_valid;
-wire [`NUM_WARP-1:0]            warp_to_issue_oh;
-wire [`NUM_WARP-1:0]            inst_buffer_has_data; 
 
+wire                            operand_collect_in_ready;
 
 assign inst_to_decode = code_rd_rsp_data_i;
 
@@ -90,8 +90,9 @@ sm_fetch U_sm_fetch (
 	.sm_warp_req_valid_i         (sm_warp_req_valid),
 	.sm_warp_req_wid_i           (sm_warp_req_wid),
 	.sm_warp_req_start_addr_i    (tpc_req_start_addr_i),
-	.inst_buffer_avail_i         (inst_buffer_avail),
+	.ibuffer_avail_i             (ibuffer_avail),
 	.stalled_warps_i             (stalled_warps),
+	.ready_warps_o               (ready_warps),
 	
 	.code_mem_ready_i            (code_mem_ready_i),
 	.code_rd_req_valid_o         (code_rd_req_valid_o),
@@ -155,9 +156,8 @@ sm_inst_buffer #(
 	.ibuffer_signals_opcode_nb_o  (ibuffer_signals_opcode_nb),
 	.ibuffer_signals_valid_i      (ibuffer_signals_valid),
 	
-	.warp_to_issue_oh_i           (warp_to_issue_oh),
-	.inst_buffer_has_data_o       (inst_buffer_has_data),
-	.inst_buffer_avail_o          (inst_buffer_avail)
+	.ready_warps_i                (ready_warps),
+	.ibuffer_avail_o              (ibuffer_avail)
 );
 
 //sm_score_board U_sm_score_board (

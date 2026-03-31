@@ -5,8 +5,10 @@ module sm_fetch (
 	input  sm_warp_req_valid_i,                               // indiate a new warp request is available
 	input  [`DEPTH_WARP-1:0] sm_warp_req_wid_i,                                 // warp id of this new warp request
 	input  [`CODE_ADDR_WIDTH-1:0] sm_warp_req_start_addr_i,   // starting address for kernel code
-	input  [`NUM_WARP-1:0] inst_buffer_avail_i,               // indicate whether instruction buffer of this warp has free space
+	input  [`NUM_WARP-1:0] ibuffer_avail_i,                   // indicate whether instruction buffer of this warp has free space
 	input  [`NUM_WARP-1:0] stalled_warps_i,                   // tell the information of stalled warps
+
+	output [`NUM_WARP-1:0] ready_warps_o,                     // indicate the warps that are ready for instruction fetch
 	
 	input  code_mem_ready_i,                                  // signal indicating whether external code memory is ready for access
 	output code_rd_req_valid_o,                               // valid signal of code memory read operation
@@ -20,7 +22,6 @@ module sm_fetch (
 
 wire sm_warp_req_fire;
 reg  [`NUM_WARP-1:0] active_warps;
-wire [`NUM_WARP-1:0] ready_warps;
 
 wire [`DEPTH_WARP-1:0] selected_warp;
 wire [`NUM_WARP-1:0]   selected_warp_oh;
@@ -31,7 +32,7 @@ integer i;
 
 assign sm_warp_req_fire = sm_warp_req_valid_i;
 
-assign ready_warps = active_warps & inst_buffer_avail_i; //(active_warps & stalled_warps_i) & inst_buffer_avail_i;
+assign ready_warps_o = active_warps & ibuffer_avail_i; //(active_warps & stalled_warps_i) & ibuffer_avail_i;
 
 always @(posedge clk or negedge rst_n) begin
 	if(!rst_n) begin
@@ -48,7 +49,7 @@ rr_arb #(
 ) fetch_rr_arb (
 	.clk                 (clk),
 	.rst_n               (rst_n),
-	.req_i               (ready_warps),
+	.req_i               (ready_warps_o),
 	.grant_o             (selected_warp_oh)
 );
 
@@ -68,12 +69,12 @@ always @(posedge clk or negedge rst_n) begin
 		end 
 		else begin			
 			warp_pcs[i] <= (sm_warp_req_fire && (i == sm_warp_req_wid_i)) ? sm_warp_req_start_addr_i :
-								((ready_warps[i] && (i == selected_warp)) ? warp_pcs[i]+(`CODE_MEM_DATA_WIDTH >> 3): warp_pcs[i]);
+								((ready_warps_o[i] && (i == selected_warp)) ? warp_pcs[i]+(`CODE_MEM_DATA_WIDTH >> 3): warp_pcs[i]);
 		end
 	end
 end
 
-assign code_rd_req_valid_o = (|ready_warps) && code_mem_ready_i;
+assign code_rd_req_valid_o = (|ready_warps_o) && code_mem_ready_i;
 assign code_rd_req_addr_o = warp_pcs[selected_warp];
 assign code_rd_req_wid_o = selected_warp;
 

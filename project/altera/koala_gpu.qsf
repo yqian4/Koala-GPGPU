@@ -63,7 +63,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/common/sync_fifo_count.
 set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/common/define.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/gpgpu_top.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/sm_core/sm_core.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/sm_core/sm_warp_assign.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/sm_core/sm_warp_scheduler.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/sm_core/sm_fetch.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/sm_core/sm_decode.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../rtl/sm_core/sm_inst_buffer.sv

@@ -33,9 +33,8 @@ module sm_inst_buffer #(
 	output [5:0] ibuffer_signals_opcode_nb_o,                  // output opcode nb field	
 	output ibuffer_signals_valid_i,                            // valid signal of decode signals	
 		
-	input [`NUM_WARP-1:0]  warp_to_issue_oh_i,                 // one hot warp id to be issued	
-	output [`NUM_WARP-1:0] inst_buffer_has_data_o,             // instruction buffer has data flag
-	output [`NUM_WARP-1:0] inst_buffer_avail_o                 // instruction buffer available flag
+	input  [`NUM_WARP-1:0] ready_warps_i,                      // indicate the warps that are ready for instruction fetch
+	output [`NUM_WARP-1:0] ibuffer_avail_o                     // instruction buffer available flag
 );
 
 wire [`NUM_WARP-1:0] rd_en, wr_en;
@@ -45,7 +44,10 @@ wire [`NUM_WARP-1:0] empty;
 wire  [IBUFFER_DATA_WIDTH-1:0] wr_data;
 wire  [IBUFFER_DATA_WIDTH-1:0] rd_data;
 
-assign rd_en = warp_to_issue_oh_i;
+wire [`NUM_WARP-1:0] ibuffer_has_data;
+wire [`NUM_WARP-1:0] ibuffer_to_issue_oh;
+
+assign rd_en = ibuffer_to_issue_oh;
 assign wr_en = (~full[decode_signals_wid_i] && decode_signals_valid_i) ? (`NUM_WARP'b1 << decode_signals_wid_i) : `NUM_WARP'b0;
 
 assign wr_data = 
@@ -95,8 +97,17 @@ assign ibuffer_signals_immea_o = rd_data[47:26];
 assign ibuffer_signals_immeb_o = rd_data[57:48];
 assign ibuffer_signals_opcode_nb_o = rd_data[63:58];
 
-assign ibuffer_signals_valid_i = (warp_to_issue_oh_i != 0) ? 1'b1:1'b0;
-assign inst_buffer_has_data_o = ~empty;
-assign inst_buffer_avail_o = ~full;
+assign ibuffer_signals_valid_i = (ibuffer_has_data != `NUM_WARP'b0) ? 1'b1:1'b0;
+assign ibuffer_has_data = (~empty) & ready_warps_i;
+assign ibuffer_avail_o = ~full;
+
+rr_arb #(
+	.ARB_WIDTH(`NUM_WARP)
+) ibuffer_rr_arb (
+	.clk                 (clk),
+	.rst_n               (rst_n),
+	.req_i               (ibuffer_has_data),
+	.grant_o             (ibuffer_to_issue_oh)
+);
 
 endmodule
