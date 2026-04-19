@@ -52,7 +52,7 @@ async def test_integer(dut):
     #rpdb.set_trace()
     
     cycles = 0
-    for i in range(8):
+    for i in range(10):
         code_memory.run()
 
         await RisingEdge(dut.clk)   

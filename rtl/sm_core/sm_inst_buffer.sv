@@ -45,6 +45,7 @@ wire [`NUM_WARP-1:0] empty;
 
 wire  [IBUFFER_DATA_WIDTH-1:0] wr_data;
 wire  [IBUFFER_DATA_WIDTH-1:0] rd_data[`NUM_WARP-1:0];
+wire [`NUM_WARP-1:0] rd_data_valid;
 
 wire [`NUM_WARP-1:0] ibuffer_has_data;
 wire [`NUM_WARP-1:0] ibuffer_to_issue_oh;
@@ -80,6 +81,7 @@ generate
 			.rst_n             (rst_n),
 			.rd_en_i           (rd_en[i]),
 			.rd_data_o         (rd_data[i]),
+			.rd_valid_o        (rd_data_valid[i]),
 			.wr_en_i           (wr_en[i]),
 			.wr_data_i         (wr_data),
 			.empty_o           (empty[i]),
@@ -100,7 +102,7 @@ assign ibuffer_signals_opcode_nb_o = rd_data[ibuffer_to_issue][63:58];
 assign ibuffer_signals_wid_o = rd_data[ibuffer_to_issue][64+:`DEPTH_WARP];	
 assign ibuffer_signals_inst_o = rd_data[ibuffer_to_issue][IBUFFER_DATA_WIDTH-1 -:`CODE_MEM_DATA_WIDTH];
 
-assign ibuffer_signals_valid_o = (ibuffer_has_data != `NUM_WARP'b0) ? 1'b1:1'b0;
+assign ibuffer_signals_valid_o = rd_data_valid[ibuffer_to_issue];
 assign ibuffer_has_data = (~empty) & ready_warps_i;
 assign ibuffer_avail_o = ~full;
 

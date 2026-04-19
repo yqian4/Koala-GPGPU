@@ -62,6 +62,7 @@ def dump_inst_buffer(dut):
     logger.log("U_sm_inst_buffer.ibuffer_to_issue_oh", dut.U_sm_core.U_sm_inst_buffer.ibuffer_to_issue_oh.value)
     logger.log("U_sm_inst_buffer.rd_en", dut.U_sm_core.U_sm_inst_buffer.rd_en.value)
     logger.log("U_sm_inst_buffer.rd_data", dut.U_sm_core.U_sm_inst_buffer.rd_data.value)
+    logger.log("U_sm_inst_buffer.rd_data_valid", dut.U_sm_core.U_sm_inst_buffer.rd_data_valid.value)
     logger.log("U_sm_inst_buffer.wr_en", dut.U_sm_core.U_sm_inst_buffer.wr_en.value)
     logger.log("U_sm_inst_buffer.wr_data", dut.U_sm_core.U_sm_inst_buffer.wr_data.value)
 
@@ -70,6 +71,7 @@ def dump_inst_buffer(dut):
     logger.log("inst_buffer_per_warp[0].U_sync_fifo.wr_ptr.value", dut.U_sm_core.U_sm_inst_buffer.inst_buffer_per_warp[0].U_sync_fifo.wr_ptr.value)
     logger.log("inst_buffer_per_warp[0].U_sync_fifo.rd_en_i.value", dut.U_sm_core.U_sm_inst_buffer.inst_buffer_per_warp[0].U_sync_fifo.rd_en_i.value)
     logger.log("inst_buffer_per_warp[0].U_sync_fifo.rd_data_o.value", dut.U_sm_core.U_sm_inst_buffer.inst_buffer_per_warp[0].U_sync_fifo.rd_data_o.value)
+    logger.log("inst_buffer_per_warp[0].U_sync_fifo.rd_valid_o.value", dut.U_sm_core.U_sm_inst_buffer.inst_buffer_per_warp[0].U_sync_fifo.rd_valid_o.value)
     logger.log("inst_buffer_per_warp[0].U_sync_fifo.wr_en_i.value", dut.U_sm_core.U_sm_inst_buffer.inst_buffer_per_warp[0].U_sync_fifo.wr_en_i.value)
     logger.log("inst_buffer_per_warp[0].U_sync_fifo.wr_data_i.value", dut.U_sm_core.U_sm_inst_buffer.inst_buffer_per_warp[0].U_sync_fifo.wr_data_i.value)
 

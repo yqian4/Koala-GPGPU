@@ -11,6 +11,7 @@ module sync_fifo #(
 	
 	input  rd_en_i,                                           // fifo read enable signal
 	output reg [DATA_WIDTH-1:0] rd_data_o,                    // read data from fifo
+	output reg rd_valid_o,                                    // fifo read data valid signal	
 	input  wr_en_i,                                           // fifo write enable signal
 	input  [DATA_WIDTH-1:0] wr_data_i,                        // write data to fifo
 	output empty_o,                                           // fifo empty flag
@@ -36,13 +37,18 @@ assign {wr_ptr_msb, wr_ptr_true} = wr_ptr;
 always @(posedge clk or negedge rst_n) begin
 	if(!rst_n) begin
     	rd_ptr <= 'd0;
+		rd_data_o <= 'h0;
+		rd_valid_o <= 1'b0;
     end
     else if(rd_en_i && !empty_o) begin
 		rd_data_o <= fifo_data[rd_ptr_true];
     	rd_ptr <= rd_ptr + 1;
+		rd_valid_o <= 1'b1;
     end
     else begin
     	rd_ptr <= rd_ptr;
+		rd_data_o <= 'h0;
+		rd_valid_o <= 1'b0;
     end
 
 end
