@@ -44,10 +44,11 @@ wire [`DEPTH_WARP-1:0]          decode_signals_wid;
 wire [3:0]                      decode_signals_opcode_na;
 wire [5:0]                      decode_signals_mod;
 wire [3:0]                      decode_signals_pr;
-wire [5:0]                      decode_signals_re0;
-wire [5:0]                      decode_signals_re1;
+wire [5:0]                      decode_signals_dst;
+wire [5:0]                      decode_signals_src1;
+wire [19:0]                     decode_signals_immea;
+wire [1:0]                      decode_signals_space_sel;
 wire [9:0]                      decode_signals_immeb;
-wire [21:0]                     decode_signals_immea;
 wire [5:0]                      decode_signals_opcode_nb;
 
 wire [`CODE_MEM_DATA_WIDTH-1:0] ibuffer_signals_inst;
@@ -55,10 +56,11 @@ wire [`DEPTH_WARP-1:0]          ibuffer_signals_wid;
 wire [3:0]                      ibuffer_signals_opcode_na;
 wire [5:0]                      ibuffer_signals_mod;
 wire [3:0]                      ibuffer_signals_pr;
-wire [5:0]                      ibuffer_signals_re0;
-wire [5:0]                      ibuffer_signals_re1;
+wire [5:0]                      ibuffer_signals_dst;
+wire [5:0]                      ibuffer_signals_src1;
+wire [19:0]                     ibuffer_signals_immea;
+wire [1:0]                      ibuffer_signals_space_sel;
 wire [9:0]                      ibuffer_signals_immeb;
-wire [21:0]                     ibuffer_signals_immea;
 wire [5:0]                      ibuffer_signals_opcode_nb;
 wire                            ibuffer_signals_valid;
 
@@ -117,9 +119,10 @@ sm_decode U_sm_decode (
 	.decode_signals_opcode_na_o  (decode_signals_opcode_na),
 	.decode_signals_mod_o        (decode_signals_mod),
 	.decode_signals_pr_o         (decode_signals_pr),
-	.decode_signals_re0_o        (decode_signals_re0),
-	.decode_signals_re1_o        (decode_signals_re1),
+	.decode_signals_dst_o        (decode_signals_dst),
+	.decode_signals_src1_o       (decode_signals_src1),
 	.decode_signals_immea_o      (decode_signals_immea),
+	.decode_signals_space_sel_o  (decode_signals_space_sel),
 	.decode_signals_immeb_o      (decode_signals_immeb),	
 	.decode_signals_opcode_nb_o  (decode_signals_opcode_nb)
 );
@@ -138,9 +141,10 @@ sm_inst_buffer #(
 	.decode_signals_opcode_na_i   (decode_signals_opcode_na),
 	.decode_signals_mod_i         (decode_signals_mod),
 	.decode_signals_pr_i          (decode_signals_pr),
-	.decode_signals_re0_i         (decode_signals_re0),
-	.decode_signals_re1_i         (decode_signals_re1),
+	.decode_signals_dst_i         (decode_signals_dst),
+	.decode_signals_src1_i        (decode_signals_src1),
 	.decode_signals_immea_i       (decode_signals_immea),
+	.decode_signals_space_sel_i   (decode_signals_space_sel),
 	.decode_signals_immeb_i       (decode_signals_immeb),	
 	.decode_signals_opcode_nb_i   (decode_signals_opcode_nb),
   
@@ -149,12 +153,13 @@ sm_inst_buffer #(
 	.ibuffer_signals_opcode_na_o  (ibuffer_signals_opcode_na),
 	.ibuffer_signals_mod_o        (ibuffer_signals_mod),                      
 	.ibuffer_signals_pr_o         (ibuffer_signals_pr),                        
-	.ibuffer_signals_re0_o        (ibuffer_signals_re0),                        
-	.ibuffer_signals_re1_o        (ibuffer_signals_re1), 
+	.ibuffer_signals_dst_o        (ibuffer_signals_dst),                        
+	.ibuffer_signals_src1_o       (ibuffer_signals_src1), 
 	.ibuffer_signals_immea_o      (ibuffer_signals_immea), 
+	.ibuffer_signals_space_sel_o  (ibuffer_signals_space_sel),
 	.ibuffer_signals_immeb_o      (ibuffer_signals_immeb),
 	.ibuffer_signals_opcode_nb_o  (ibuffer_signals_opcode_nb),
-	.ibuffer_signals_valid_i      (ibuffer_signals_valid),
+	.ibuffer_signals_valid_o      (ibuffer_signals_valid),
 	
 	.ready_warps_i                (ready_warps),
 	.ibuffer_avail_o              (ibuffer_avail)

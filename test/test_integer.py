@@ -8,8 +8,8 @@ from .logger import logger
 from .host import host_interface
 from .dump import dump_per_cycle
 
-from remote_pdb import RemotePdb
-rpdb = RemotePdb("127.0.0.1", 4000)
+#from remote_pdb import RemotePdb
+#rpdb = RemotePdb("127.0.0.1", 4000)
 
 @cocotb.test()
 async def test_integer(dut):
@@ -29,8 +29,7 @@ async def test_integer(dut):
     # Setup 50MHZ Clock
     clock = Clock(dut.clk, 10, units="us")
     cocotb.start_soon(clock.start())
-
-    rpdb.set_trace()
+    
     # Reset
     dut.rst_n.value = 0
     await RisingEdge(dut.clk)
@@ -49,6 +48,8 @@ async def test_integer(dut):
     host.clear()
     await RisingEdge(dut.clk)
     dump_per_cycle (dut, 999)
+
+    #rpdb.set_trace()
     
     cycles = 0
     for i in range(8):
