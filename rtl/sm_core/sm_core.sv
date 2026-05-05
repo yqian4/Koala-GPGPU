@@ -66,6 +66,38 @@ wire                            ibuffer_signals_valid;
 
 wire                            operand_collect_in_ready;
 
+wire [`CODE_MEM_DATA_WIDTH-1:0] sb_signals_inst;
+wire [`DEPTH_WARP-1:0]          sb_signals_wid;
+wire [3:0]                      sb_signals_opcode_na;
+wire [5:0]                      sb_signals_mod;
+wire [3:0]                      sb_signals_pr;
+wire [5:0]                      sb_signals_dst;
+wire [5:0]                      sb_signals_src1;
+wire [19:0]                     sb_signals_immea;
+wire [1:0]                      sb_signals_space_sel;
+wire [9:0]                      sb_signals_immeb;
+wire [5:0]                      sb_signals_opcode_nb;
+wire                            sb_signals_valid;
+
+wire                            wb_valid;
+wire [`DEPTH_WARP-1:0]          wb_wid;
+wire [5:0]                      wb_dst;
+wire [`REG_DATA_WIDTH-1:0]      wb_data;
+
+wire [`CODE_MEM_DATA_WIDTH-1:0] oc_signals_inst;
+wire [`DEPTH_WARP-1:0]          oc_signals_wid;
+wire [3:0]                      oc_signals_opcode_na;
+wire [5:0]                      oc_signals_mod;
+wire [3:0]                      oc_signals_pr;
+wire [5:0]                      oc_signals_dst;
+wire [`REG_DATA_WIDTH-1:0]      oc_signals_src1_data;
+wire [`REG_DATA_WIDTH-1:0]      oc_signals_src2_data;
+wire [19:0]                     oc_signals_immea;
+wire [1:0]                      oc_signals_space_sel;
+wire [9:0]                      oc_signals_immeb;
+wire [5:0]                      oc_signals_opcode_nb;
+wire                            oc_signals_valid;
+
 assign inst_to_decode = code_rd_rsp_data_i;
 
 sm_warp_scheduler U_sm_warp_scheduler (
@@ -165,15 +197,84 @@ sm_inst_buffer #(
 	.ibuffer_avail_o              (ibuffer_avail)
 );
 
-//sm_score_board U_sm_score_board (
-//
-//
-//);
-//
-//sm_operand_collect U_sm_operand_collect (
-//
-//
-//);
+// writeback signals tied off until sm_write is implemented
+assign wb_valid = 1'b0;
+assign wb_wid   = {`DEPTH_WARP{1'b0}};
+assign wb_dst   = 6'h0;
+assign wb_data  = {`REG_DATA_WIDTH{1'b0}};
+
+sm_score_board U_sm_score_board (
+	.clk                          (clk),
+	.rst_n                        (rst_n),
+
+	.ibuffer_signals_valid_i      (ibuffer_signals_valid),
+	.ibuffer_signals_inst_i       (ibuffer_signals_inst),
+	.ibuffer_signals_wid_i        (ibuffer_signals_wid),
+	.ibuffer_signals_opcode_na_i  (ibuffer_signals_opcode_na),
+	.ibuffer_signals_mod_i        (ibuffer_signals_mod),
+	.ibuffer_signals_pr_i         (ibuffer_signals_pr),
+	.ibuffer_signals_dst_i        (ibuffer_signals_dst),
+	.ibuffer_signals_src1_i       (ibuffer_signals_src1),
+	.ibuffer_signals_immea_i      (ibuffer_signals_immea),
+	.ibuffer_signals_space_sel_i  (ibuffer_signals_space_sel),
+	.ibuffer_signals_immeb_i      (ibuffer_signals_immeb),
+	.ibuffer_signals_opcode_nb_i  (ibuffer_signals_opcode_nb),
+
+	.wb_valid_i                   (wb_valid),
+	.wb_wid_i                     (wb_wid),
+	.wb_dst_i                     (wb_dst),
+
+	.sb_signals_valid_o           (sb_signals_valid),
+	.sb_signals_inst_o            (sb_signals_inst),
+	.sb_signals_wid_o             (sb_signals_wid),
+	.sb_signals_opcode_na_o       (sb_signals_opcode_na),
+	.sb_signals_mod_o             (sb_signals_mod),
+	.sb_signals_pr_o              (sb_signals_pr),
+	.sb_signals_dst_o             (sb_signals_dst),
+	.sb_signals_src1_o            (sb_signals_src1),
+	.sb_signals_immea_o           (sb_signals_immea),
+	.sb_signals_space_sel_o       (sb_signals_space_sel),
+	.sb_signals_immeb_o           (sb_signals_immeb),
+	.sb_signals_opcode_nb_o       (sb_signals_opcode_nb),
+
+	.stalled_warps_o              (stalled_warps)
+);
+sm_operand_collect U_sm_operand_collect (
+	.clk                          (clk),
+	.rst_n                        (rst_n),
+
+	.sb_signals_valid_i           (sb_signals_valid),
+	.sb_signals_inst_i            (sb_signals_inst),
+	.sb_signals_wid_i             (sb_signals_wid),
+	.sb_signals_opcode_na_i       (sb_signals_opcode_na),
+	.sb_signals_mod_i             (sb_signals_mod),
+	.sb_signals_pr_i              (sb_signals_pr),
+	.sb_signals_dst_i             (sb_signals_dst),
+	.sb_signals_src1_i            (sb_signals_src1),
+	.sb_signals_immea_i           (sb_signals_immea),
+	.sb_signals_space_sel_i       (sb_signals_space_sel),
+	.sb_signals_immeb_i           (sb_signals_immeb),
+	.sb_signals_opcode_nb_i       (sb_signals_opcode_nb),
+
+	.wb_valid_i                   (wb_valid),
+	.wb_wid_i                     (wb_wid),
+	.wb_dst_i                     (wb_dst),
+	.wb_data_i                    (wb_data),
+
+	.oc_signals_valid_o           (oc_signals_valid),
+	.oc_signals_inst_o            (oc_signals_inst),
+	.oc_signals_wid_o             (oc_signals_wid),
+	.oc_signals_opcode_na_o       (oc_signals_opcode_na),
+	.oc_signals_mod_o             (oc_signals_mod),
+	.oc_signals_pr_o              (oc_signals_pr),
+	.oc_signals_dst_o             (oc_signals_dst),
+	.oc_signals_src1_data_o       (oc_signals_src1_data),
+	.oc_signals_src2_data_o       (oc_signals_src2_data),
+	.oc_signals_immea_o           (oc_signals_immea),
+	.oc_signals_space_sel_o       (oc_signals_space_sel),
+	.oc_signals_immeb_o           (oc_signals_immeb),
+	.oc_signals_opcode_nb_o       (oc_signals_opcode_nb)
+);
 //
 //sm_issue U_sm_issue (
 //

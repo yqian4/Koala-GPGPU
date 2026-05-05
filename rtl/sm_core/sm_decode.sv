@@ -36,7 +36,7 @@ assign decode_signals_wid_o = valid_i?wid_i:'h0;
 // Const Offset: [41:26], Const Bank [45:42]
 // Immediate A Value: [45:26]
 // Space Selector: [47:46]: 00-use SRC2, 01-use Const, 10-unused, 11-Immediate Value
-// Src3 Register: [54:49]
+// Src3 Register: [53:48]
 // Immediate B Value: [57:48]
 // Opcode NB: [63:58]
 

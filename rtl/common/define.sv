@@ -11,3 +11,7 @@
 `define NUM_WARP                8
 `define DEPTH_WARP              $clog2(`NUM_WARP)         //the depth of warp
 
+`define NUM_REG                 64
+`define DEPTH_REG               $clog2(`NUM_REG)          //the depth of register file
+`define REG_DATA_WIDTH          32
+
