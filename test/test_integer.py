@@ -19,6 +19,7 @@ async def test_integer(dut):
     kernel_code = [
         0x1800c00190005de4,                 # MOV32I R1, 0x64           ; R1 = 100
         0x1800c00320009de4,                 # MOV32I R2, 0xc8           ; R2 = 200
+        0x280080000020DDE4,                 # MOV R3, R2                ; R3 = R2
         0x4800000008105c03,                 # IADD R1, R1, R2           ; R1 = R1 + R2
         0x5000000008105ca3,                 # IMUL R1, R1, R2           ; R1 = R1 * R2
         0x8000000000001de7,                 # EXIT                      ; Exit
@@ -52,12 +53,27 @@ async def test_integer(dut):
     #rpdb.set_trace()
     
     cycles = 0
-    for i in range(10):
+    for i in range(100):
         code_memory.run()
 
-        await RisingEdge(dut.clk)   
+        await RisingEdge(dut.clk)
 
-        dump_per_cycle(dut, cycles)  
+        dump_per_cycle(dut, cycles)
+
 
         cycles += 1
+
+    # Verify register values (flattened indexing: warp0 R_n = index n)
+    oc = dut.U_sm_core.U_sm_operand_collect
+    r1_val = oc.reg_file[1].value.integer
+    r2_val = oc.reg_file[2].value.integer
+    r3_val = oc.reg_file[3].value.integer
+    logger.log(f"\n===== Register Verification =====")
+    logger.log(f"R1 = {r1_val} (0x{r1_val:08x})")
+    logger.log(f"R2 = {r2_val} (0x{r2_val:08x})")
+    logger.log(f"R3 = {r3_val} (0x{r3_val:08x})")
+
+    assert r1_val == 60000, f"IMUL R1, R1, R2 failed: expected R1=60000, got R1={r1_val}"
+    assert r2_val == 200, f"MOV32I R2, 200 failed: expected R2=200, got R2={r2_val}"
+    assert r3_val == 200, f"MOV R3, R2 failed: expected R3=200, got R3={r3_val}"
 

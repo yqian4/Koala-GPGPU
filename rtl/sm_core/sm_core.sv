@@ -84,6 +84,14 @@ wire [`DEPTH_WARP-1:0]          wb_wid;
 wire [5:0]                      wb_dst;
 wire [`REG_DATA_WIDTH-1:0]      wb_data;
 
+wire                            int_alu_valid;
+wire [`DEPTH_WARP-1:0]          int_alu_wid;
+wire [5:0]                      int_alu_dst;
+wire [`REG_DATA_WIDTH-1:0]      int_alu_src1_data;
+wire [`REG_DATA_WIDTH-1:0]      int_alu_src2_data;
+wire [5:0]                      int_alu_opcode_nb;
+wire [5:0]                      int_alu_mod;
+
 wire [`CODE_MEM_DATA_WIDTH-1:0] oc_signals_inst;
 wire [`DEPTH_WARP-1:0]          oc_signals_wid;
 wire [3:0]                      oc_signals_opcode_na;
@@ -197,11 +205,10 @@ sm_inst_buffer #(
 	.ibuffer_avail_o              (ibuffer_avail)
 );
 
-// writeback signals tied off until sm_write is implemented
-assign wb_valid = 1'b0;
-assign wb_wid   = {`DEPTH_WARP{1'b0}};
-assign wb_dst   = 6'h0;
-assign wb_data  = {`REG_DATA_WIDTH{1'b0}};
+wire int_alu_wb_valid;
+wire [`DEPTH_WARP-1:0] int_alu_wb_wid;
+wire [5:0] int_alu_wb_dst;
+wire [`REG_DATA_WIDTH-1:0] int_alu_wb_data;
 
 sm_score_board U_sm_score_board (
 	.clk                          (clk),
@@ -275,22 +282,68 @@ sm_operand_collect U_sm_operand_collect (
 	.oc_signals_immeb_o           (oc_signals_immeb),
 	.oc_signals_opcode_nb_o       (oc_signals_opcode_nb)
 );
-//
-//sm_issue U_sm_issue (
-//
-//
-//);
-//
-//sm_execute U_sm_execute (
-//
-//
-//);
-//
-//
-//sm_write U_sm_write (
-//
-//
-//);
+sm_issue U_sm_issue (
+	.clk                          (clk),
+	.rst_n                        (rst_n),
+
+	.oc_signals_valid_i           (oc_signals_valid),
+	.oc_signals_inst_i            (oc_signals_inst),
+	.oc_signals_wid_i             (oc_signals_wid),
+	.oc_signals_opcode_na_i       (oc_signals_opcode_na),
+	.oc_signals_mod_i             (oc_signals_mod),
+	.oc_signals_pr_i              (oc_signals_pr),
+	.oc_signals_dst_i             (oc_signals_dst),
+	.oc_signals_src1_data_i       (oc_signals_src1_data),
+	.oc_signals_src2_data_i       (oc_signals_src2_data),
+	.oc_signals_immea_i           (oc_signals_immea),
+	.oc_signals_space_sel_i       (oc_signals_space_sel),
+	.oc_signals_immeb_i           (oc_signals_immeb),
+	.oc_signals_opcode_nb_i       (oc_signals_opcode_nb),
+
+	.int_alu_valid_o              (int_alu_valid),
+	.int_alu_wid_o                (int_alu_wid),
+	.int_alu_dst_o                (int_alu_dst),
+	.int_alu_src1_data_o          (int_alu_src1_data),
+	.int_alu_src2_data_o          (int_alu_src2_data),
+	.int_alu_opcode_nb_o          (int_alu_opcode_nb),
+	.int_alu_mod_o                (int_alu_mod),
+
+	.sm_warp_rsp_valid_o          (sm_warp_rsp_valid),
+	.sm_warp_rsp_wid_o            (sm_warp_rsp_wid)
+);
+
+sm_int_alu U_sm_int_alu (
+	.clk                          (clk),
+	.rst_n                        (rst_n),
+
+	.valid_i                      (int_alu_valid),
+	.wid_i                        (int_alu_wid),
+	.dst_i                        (int_alu_dst),
+	.src1_data_i                  (int_alu_src1_data),
+	.src2_data_i                  (int_alu_src2_data),
+	.opcode_nb_i                  (int_alu_opcode_nb),
+	.mod_i                        (int_alu_mod),
+
+	.wb_valid_o                   (int_alu_wb_valid),
+	.wb_wid_o                     (int_alu_wb_wid),
+	.wb_dst_o                     (int_alu_wb_dst),
+	.wb_data_o                    (int_alu_wb_data)
+);
+
+sm_writeback U_sm_writeback (
+	.clk                          (clk),
+	.rst_n                        (rst_n),
+
+	.int_alu_wb_valid_i           (int_alu_wb_valid),
+	.int_alu_wb_wid_i             (int_alu_wb_wid),
+	.int_alu_wb_dst_i             (int_alu_wb_dst),
+	.int_alu_wb_data_i            (int_alu_wb_data),
+
+	.wb_valid_o                   (wb_valid),
+	.wb_wid_o                     (wb_wid),
+	.wb_dst_o                     (wb_dst),
+	.wb_data_o                    (wb_data)
+);
 
 
 endmodule

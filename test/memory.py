@@ -8,7 +8,7 @@ class Memory:
         self.data_bits = data_bits
         self.data_bytes = data_bits // 8
         self.wid_bits = wid_bits
-        self.memory = [0] * (2**addr_bits)
+        self.memory = {}
         self.name = name
 
         self.mem_ready = getattr(dut, f"{name}_mem_ready_i")
@@ -34,15 +34,11 @@ class Memory:
 
         if mem_rd_req_valid == 1:
             mem_rd_index = mem_rd_req_addr // self.data_bytes
-            if (mem_rd_index < len(self.memory)):
-                mem_rd_rsp_data = self.memory[mem_rd_index]
-                if (mem_rd_rsp_data == 0):
-                    mem_rd_rsp_valid = 0
-                else:
-                    mem_rd_rsp_valid = 1
-            else:
-                mem_rd_rsp_data = 0
+            mem_rd_rsp_data = self.memory.get(mem_rd_index, 0)
+            if mem_rd_rsp_data == 0:
                 mem_rd_rsp_valid = 0
+            else:
+                mem_rd_rsp_valid = 1
             mem_rd_rsp_addr = mem_rd_req_addr
             mem_rd_rsp_wid = mem_rd_req_wid            
         else:
@@ -54,8 +50,7 @@ class Memory:
         self.mem_rd_rsp_valid.value = int(format(mem_rd_rsp_valid, '01b'),2)
     
     def write(self, address, data):
-        if address < len(self.memory):
-            self.memory[address] = data
+        self.memory[address] = data
 
     def load(self, rows: List[int]):
         for address, data in enumerate(rows):
@@ -72,8 +67,9 @@ class Memory:
         logger.info(header + " " * (table_size - len(header) - 1) + "|")
 
         logger.info("+" + "-" * (table_size - 3) + "+")
-        for i, data in enumerate(self.memory):
-            if i < rows:
+        for i in range(rows):
+            data = self.memory.get(i, 0)
+            if True:
                 if decimal:
                     row = f"| {i:<4} | {data:<4}"
                     logger.info(row + " " * (table_size - len(row) - 1) + "|")

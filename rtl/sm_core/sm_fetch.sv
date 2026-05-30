@@ -32,8 +32,11 @@ integer i;
 
 assign sm_warp_req_fire = sm_warp_req_valid_i;
 
-assign ready_warps_o = active_warps & ibuffer_avail_i; //(active_warps & stalled_warps_i) & ibuffer_avail_i;
+assign ready_warps_o = active_warps & ~stalled_warps_i;
 
+wire [`NUM_WARP-1:0] fetch_eligible;
+assign fetch_eligible = ready_warps_o & ibuffer_avail_i;
+ 
 always @(posedge clk or negedge rst_n) begin
 	if(!rst_n) begin
 		active_warps <= 'h0;
@@ -49,7 +52,7 @@ rr_arb #(
 ) fetch_rr_arb (
 	.clk                 (clk),
 	.rst_n               (rst_n),
-	.req_i               (ready_warps_o),
+	.req_i               (fetch_eligible),
 	.grant_o             (selected_warp_oh)
 );
 
@@ -69,12 +72,12 @@ always @(posedge clk or negedge rst_n) begin
 		end 
 		else begin			
 			warp_pcs[i] <= (sm_warp_req_fire && (i == sm_warp_req_wid_i)) ? sm_warp_req_start_addr_i :
-								((ready_warps_o[i] && (i == selected_warp)) ? warp_pcs[i]+(`CODE_MEM_DATA_WIDTH >> 3): warp_pcs[i]);
+								((fetch_eligible[i] && (i == selected_warp)) ? warp_pcs[i]+(`CODE_MEM_DATA_WIDTH >> 3): warp_pcs[i]);
 		end
 	end
 end
 
-assign code_rd_req_valid_o = (|ready_warps_o) && code_mem_ready_i;
+assign code_rd_req_valid_o = (|fetch_eligible) && code_mem_ready_i;
 assign code_rd_req_addr_o = warp_pcs[selected_warp];
 assign code_rd_req_wid_o = selected_warp;
 
