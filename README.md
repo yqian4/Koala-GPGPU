@@ -1,6 +1,6 @@
 # Koala-GPGPU
 
-A GPGPU implementation compatible with the NVIDIA Fermi GPU microarchitecture, written in SystemVerilog. This project is a forward work for FlexGrip Plus, implementing a streaming multiprocessor (SM) core with warp-based execution.
+It is a mimic GPGPU implementation compatible with the NVIDIA GPU microarchitecture starting from Fermi, written in SystemVerilog. This project is a forward work for FlexGrip Plus, implementing a complete streaming multiprocessor (SM) core with warp-based execution.
 
 ## Architecture
 
@@ -62,11 +62,13 @@ Space selector: `00` = register src2, `01` = constant memory, `11` = immediate v
 ## Build & Test
 
 ```bash
-# Run the integer operations test (MOV32I, MOV, IADD, IMUL, EXIT)
-make test_integer
 
 # Clean build artifacts
 make clean
+
+# Run the integer operations test (MOV32I, MOV, IADD, IMUL, EXIT)
+make test_integer
+
 ```
 
 The build system copies RTL and test sources into `build/`, compiles with `iverilog -g2012`, and runs via `vvp` with the Cocotb VPI plugin.
@@ -82,15 +84,6 @@ Tests are Python-based Cocotb testbenches in `test/`:
 | `host.py` | Host/GPU interface driver for kernel launch/completion |
 | `dump.py` | Per-cycle pipeline state dump for debugging |
 | `logger.py` | Timestamped log file output |
-
-## Common RTL Primitives (`rtl/common/`)
-
-| Module | Description |
-|--------|-------------|
-| `sync_fifo` | Synchronous FIFO with pointer-based full/empty |
-| `rr_arb` | Round-robin arbiter |
-| `fixed_pri_arb` | Fixed-priority arbiter |
-| `oh2bin` | One-hot to binary encoder |
 
 ## FPGA Target
 
