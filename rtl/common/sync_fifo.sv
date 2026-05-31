@@ -29,7 +29,6 @@ wire [ADDR_WIDTH-1:0] wr_ptr_true;
 
 wire rd_ptr_msb;
 wire wr_ptr_msb;
-integer i;
 
 assign {rd_ptr_msb, rd_ptr_true} = rd_ptr;
 assign {wr_ptr_msb, wr_ptr_true} = wr_ptr;
@@ -42,7 +41,7 @@ always @(posedge clk or negedge rst_n) begin
     end
     else if(rd_en_i && !empty_o) begin
 		rd_data_o <= fifo_data[rd_ptr_true];
-    	rd_ptr <= rd_ptr + 1;
+    	rd_ptr <= rd_ptr + {{ADDR_WIDTH{1'b0}}, 1'b1};
 		rd_valid_o <= 1'b1;
     end
     else begin
@@ -53,17 +52,26 @@ always @(posedge clk or negedge rst_n) begin
 
 end
 
+genvar i;
+generate
+	for (i = 0; i < FIFO_DEPTH; i = i + 1) begin: fifo_data_reg
+		always @(posedge clk or negedge rst_n) begin
+			if(!rst_n) begin
+				fifo_data[i] <= {DATA_WIDTH{1'b0}};
+			end
+			else if(wr_en_i && !full_o && (wr_ptr_true == i[ADDR_WIDTH-1:0])) begin
+				fifo_data[i] <= wr_data_i;
+			end
+		end
+	end
+endgenerate
 
 always @(posedge clk or negedge rst_n) begin
 	if(!rst_n) begin
     	wr_ptr <= 'd0;
-		for (i = 0; i < FIFO_DEPTH; i = i + 1) begin
-			 fifo_data[i] <= {DATA_WIDTH{1'b0}};
-		end
     end
     else if(wr_en_i && !full_o) begin
-		fifo_data[wr_ptr_true] <= wr_data_i;
-    	wr_ptr <= wr_ptr + 1;
+    	wr_ptr <= wr_ptr + {{ADDR_WIDTH{1'b0}}, 1'b1};
     end
     else begin
     	wr_ptr <= wr_ptr;

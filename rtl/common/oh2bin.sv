@@ -16,7 +16,7 @@ wire [ONE_HOT_WIDTH-1:0] bin_temp2 [BIN_WIDTH-1:0];
 genvar i,j,k;
 generate
 	for(i = 0;i < ONE_HOT_WIDTH;i = i + 1) begin: temp1_loop
-		assign bin_temp1[i] = oh_i[i] ? i : 'b0;
+		assign bin_temp1[i] = oh_i[i] ? BIN_WIDTH'(i) : {BIN_WIDTH{1'b0}};
 	end
 endgenerate
 

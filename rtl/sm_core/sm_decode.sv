@@ -23,7 +23,7 @@ module sm_decode (
 );
 
 assign decode_signals_inst_o = valid_i?inst_i:'h0;
-assign decode_signals_wid_o = valid_i?wid_i:'h0;
+assign decode_signals_wid_o = valid_i?wid_i:{`DEPTH_WARP{1'b0}};
 
 
 // Ferimi GPU Instruction Encoding Format (8-Byte Instruction):
@@ -40,14 +40,14 @@ assign decode_signals_wid_o = valid_i?wid_i:'h0;
 // Immediate B Value: [57:48]
 // Opcode NB: [63:58]
 
-assign decode_signals_opcode_na_o = valid_i?inst_i[3:0]:'h0;
-assign decode_signals_mod_o = valid_i?inst_i[9:4]:'h0;
-assign decode_signals_pr_o = valid_i?inst_i[13:10]:'h0;
-assign decode_signals_dst_o = valid_i?inst_i[19:14]:'h0; 
-assign decode_signals_src1_o = valid_i?inst_i[25:20]:'h0; 
-assign decode_signals_immea_o = valid_i?inst_i[45:26]:'h0;
-assign decode_signals_space_sel_o = valid_i?inst_i[47:46]:'h0;  
-assign decode_signals_immeb_o = valid_i?inst_i[57:48]:'h0;
-assign decode_signals_opcode_nb_o = valid_i?inst_i[63:58]:'h0;
+assign decode_signals_opcode_na_o = valid_i?inst_i[3:0]:4'h0;
+assign decode_signals_mod_o = valid_i?inst_i[9:4]:6'h0;
+assign decode_signals_pr_o = valid_i?inst_i[13:10]:4'h0;
+assign decode_signals_dst_o = valid_i?inst_i[19:14]:6'h0;
+assign decode_signals_src1_o = valid_i?inst_i[25:20]:6'h0;
+assign decode_signals_immea_o = valid_i?inst_i[45:26]:20'h0;
+assign decode_signals_space_sel_o = valid_i?inst_i[47:46]:2'h0;
+assign decode_signals_immeb_o = valid_i?inst_i[57:48]:10'h0;
+assign decode_signals_opcode_nb_o = valid_i?inst_i[63:58]:6'h0;
 
 endmodule
